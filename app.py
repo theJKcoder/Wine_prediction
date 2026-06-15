@@ -2,99 +2,77 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load Model
+# Load model
 model = joblib.load("wine_model.pkl")
 
-# Page Configuration
+# Page config
 st.set_page_config(
     page_title="Wine Quality Prediction",
-    page_icon="🍷",
-    layout="wide"
+    page_icon="🍷"
 )
 
-# Header
+# Title
 st.title("🍷 Wine Quality Prediction")
 st.markdown(
     """
     Predict wine quality using Machine Learning.
-    
-    Enter the most important wine characteristics below and click **Predict Quality**.
+
+    Enter the 5 most important wine characteristics and click **Predict Quality**.
     """
 )
 
 st.divider()
 
-# Two Columns
-col1, col2 = st.columns(2)
+# User inputs (Top 5 important features)
+alcohol = st.number_input(
+    "Alcohol",
+    min_value=0.0,
+    value=10.5,
+    step=0.1
+)
 
-with col1:
+sulphates = st.number_input(
+    "Sulphates",
+    min_value=0.0,
+    value=0.65,
+    step=0.01
+)
 
-    st.subheader("🍇 Chemical Properties")
+volatile_acidity = st.number_input(
+    "Volatile Acidity",
+    min_value=0.0,
+    value=0.53,
+    step=0.01
+)
 
-    alcohol = st.number_input(
-        "Alcohol",
-        min_value=0.0,
-        value=9.4,
-        step=0.1
-    )
+total_sulfur_dioxide = st.number_input(
+    "Total Sulfur Dioxide",
+    min_value=0.0,
+    value=46.0,
+    step=1.0
+)
 
-    sulphates = st.number_input(
-        "Sulphates",
-        min_value=0.0,
-        value=0.56,
-        step=0.01
-    )
-
-    volatile_acidity = st.number_input(
-        "Volatile Acidity",
-        min_value=0.0,
-        value=0.70,
-        step=0.01
-    )
-
-    total_sulfur_dioxide = st.number_input(
-        "Total Sulfur Dioxide",
-        min_value=0.0,
-        value=34.0,
-        step=1.0
-    )
-
-with col2:
-
-    st.subheader("⚗️ Additional Properties")
-
-    density = st.number_input(
-        "Density",
-        min_value=0.0,
-        value=0.9978,
-        format="%.4f"
-    )
-
-    chlorides = st.number_input(
-        "Chlorides",
-        min_value=0.0,
-        value=0.076,
-        format="%.3f"
-    )
-
-    ph = st.number_input(
-        "pH",
-        min_value=0.0,
-        value=3.51,
-        step=0.01
-    )
+density = st.number_input(
+    "Density",
+    min_value=0.0,
+    value=0.9967,
+    format="%.4f"
+)
 
 st.divider()
 
 if st.button("🍷 Predict Quality", use_container_width=True):
 
-    # Default values for hidden features
-    fixed_acidity = 7.4
-    citric_acid = 0.00
-    residual_sugar = 1.9
-    free_sulfur_dioxide = 11.0
+    # Default average values for remaining features
+    fixed_acidity = 8.3
+    citric_acid = 0.27
+    residual_sugar = 2.5
+    chlorides = 0.087
+    free_sulfur_dioxide = 15.9
+    ph = 3.31
 
-    # Create dataframe in EXACT training order
+    # IMPORTANT:
+    # Feature order must match training order exactly
     input_data = pd.DataFrame([[
         fixed_acidity,
         volatile_acidity,
@@ -123,8 +101,6 @@ if st.button("🍷 Predict Quality", use_container_width=True):
 
     prediction = model.predict(input_data)[0]
 
-    st.divider()
-
     st.metric(
         label="Predicted Wine Quality",
         value=str(prediction)
@@ -148,5 +124,5 @@ if st.button("🍷 Predict Quality", use_container_width=True):
 st.divider()
 
 st.caption(
-    "Built with Streamlit • Wine Quality Prediction using Machine Learning"
+    "Machine Learning Project • Wine Quality Prediction"
 )
